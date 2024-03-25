@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Captioning</title>
+    <!-- Include Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .background-image {
+            background-image: url('https://plus.unsplash.com/premium_photo-1673697240011-76f7f9220300?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+            background-size: cover;
+            background-position: center;
+            min-height: 100vh;
+        }
+
+
+        .glassmorphism {
+            background-color: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 background-image">
+    <div class="flex justify-center items-center h-screen">
+        <div class="glassmorphism p-6 max-w-md w-full">
+            <h2 class="text-2xl font-bold mb-4">Upload Image</h2>
+            <form method="post" enctype="multipart/form-data" class="mb-4">
+                {% csrf_token %}
+                <div class="mb-4">
+                    <input type="file" name="image" id="image" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" onchange="previewImage(event)">
+                </div>
+                <button type="submit" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Submit</button>
+            </form>
+            {% if caption %}
+            <div class="mt-4">
+                <h2 class="text-xl font-bold mb-2">Image Caption</h2>
+                <p class="text-lg">{{ caption }}</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <script>
+        function previewImage(event) {
+            const input = event.target;
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const imagePreview = document.createElement('img');
+                    imagePreview.src = e.target.result;
+                    imagePreview.alt = "Uploaded Image";
+                    imagePreview.className = "max-w-full h-auto";
+                    const existingImagePreview = document.querySelector("#imagePreview");
+                    if (existingImagePreview) {
+                        existingImagePreview.parentNode.removeChild(existingImagePreview);
+                    }
+                    document.querySelector(".mb-4").appendChild(imagePreview);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+</body>
+</html>
